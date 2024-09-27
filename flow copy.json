@@ -1,0 +1,32 @@
+{
+    "config": {
+        "type": "ramp_up",
+        "keep_results": true,
+        "params": {
+            "start_load": 10,
+            "max_load": 30,
+            "test_duration": 10
+        }
+    },
+    "requests": [
+        {
+            "id": "Get data",
+            "method": "GET",
+            "headers": {
+                "Authorization": "Bearer XXXXX"
+            },
+            "url": "https://jsonplaceholder.typicode.com/users"
+        },
+        {
+            "id": "Creating data",
+            "method": "POST",
+            "headers": {
+                "Authorization": "Bearer XXXXX"
+            },
+            "url": "https://httpbin.org/post",
+            "body": {
+                "fake": "fake"
+            }
+        }
+    ]
+}

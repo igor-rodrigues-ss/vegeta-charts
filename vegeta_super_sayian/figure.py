@@ -1,12 +1,14 @@
 import pandas as pd
-from dateutil import parser
 import matplotlib.pyplot as plt
 import numpy as np
+
 
 ROTATION = 30
 GROUP_SECONDS = 5
 
-def create_gruop_key(df, seconds: int, col_name="key"):
+
+
+def create_gruop_key(df, seconds, col_name="key"):
     key = df.iloc[0, :].time
 
     result = []
@@ -14,20 +16,29 @@ def create_gruop_key(df, seconds: int, col_name="key"):
     for idx, row in df.iterrows():
         result.append(key)
         
-        if (row.timestamp.second % GROUP_SECONDS == 0):
+        if (row.timestamp.second % seconds == 0):
             key = row.time
     
     df[col_name] = result
 
 
 def mean_latency(ax, dfl):
-    latency_mean = [np.mean(dfl.latency_ms)]*len(dfl.index)
+    mean = np.mean(dfl.latency_ms)
+    latency_mean = [mean]*len(dfl.index)
+    
+    dfl.latency_ms
+    pctl = np.percentile(dfl.latency_ms, 75)
+    latency_pct = [pctl]*len(dfl.index)
+
+    ax.grid(linestyle="--")
+    ax.plot(dfl.index, dfl.latency_ms, linestyle='-', color="green", marker="o", label="Latência")
+
+    ax.plot(dfl.index, latency_mean, label=f'Média ({int(mean)})', linestyle='--', color="tab:blue")
+    ax.plot(dfl.index, latency_pct, label=f'75% ({int(pctl)})', linestyle='--', color="tab:orange")
 
     ax.set_title("Latência Média")
-    ax.grid(linestyle="--")
-    ax.plot(dfl.index, dfl.latency_ms, linestyle='-', color="green", marker="o")
-    ax.plot(dfl.index, latency_mean, label='Mean', linestyle='--')
     ax.set_ylabel("Latência (ms)")
+    ax.legend()
 
     for label in ax.get_xticklabels():
         label.set_rotation(ROTATION)
@@ -57,13 +68,20 @@ def success_and_errors(ax, df):
     error = df.loc[df["error"] != ""].count().iloc[0]
     
     values = [success, error]
+
+    tot = success.sum() + error.sum()
     
     ax.set_title("Sucesso x Erros") 
-    _ = ax.bar(["success", "error (KOs)"], values, color=["tab:green", "tab:red"])
-    _ = ax.bar_label(ax.containers[0], label_type='edge')
+    bar1 = ax.bar(["success"], success, color=["tab:green"])
+    bar2 = ax.bar(["error (KOs)"], error, color=["tab:red"])
+
+    for rect in bar1 + bar2:
+        height = rect.get_height()
+        percent = round(height / tot * 100, 1)
+        ax.text(rect.get_x() + rect.get_width() / 2.0, height, f'{height} ({percent}%)', ha='center', va='bottom')
 
 
-def generate_report(fpath):
+def generate_report(fpath: str, request_id: str):
     df = pd.read_json(fpath)
 
     df["time"] = df.timestamp.apply(lambda x: x.strftime("%H:%M:%S"))
@@ -87,8 +105,10 @@ def generate_report(fpath):
 
     fig.tight_layout()
 
+    fig.subplots_adjust(top=0.94)
+
     outfig = fpath.split(".")[0] + ".png"
 
-    fig.savefig(outfig)
+    fig.suptitle(request_id, y=1, fontweight="bold")
 
-    print(outfig)
+    fig.savefig(outfig)

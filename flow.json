@@ -1,0 +1,23 @@
+{
+    "config": {
+        "keep_results": true,
+        "ramp_up": {
+            "start_load": 10,
+            "max_load": 50,
+            "test_duration": 10
+        }
+    },
+    "requests": [
+        {
+            "id": "Creating data",
+            "method": "PUT",
+            "headers": {
+                "Authorization": "Bearer XXXXX"
+            },
+            "url": "https://httpbin.org/put",
+            "body": {
+                "fake": "fake"
+            }
+        }
+    ]
+}

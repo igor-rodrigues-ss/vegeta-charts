@@ -3,20 +3,32 @@ import json
 from vegeta_charts.ptypes import Request
 
 
-def create_target_file(request: Request):
-    id = secrets.token_hex(nbytes=8)
-    
-    target_file = f"/tmp/{id}_{request.slug_id()}.txt"
-    target_file_json = f"/tmp/{id}_{request.slug_id()}.json"
+def _create_body_file(id: str, request: Request) -> str:
+    body_fpath = f"/tmp/{id}_{request.slug_id()}.json"
 
-    with open(target_file_json, "w") as fb:
+    with open(body_fpath, "w") as fb:
         fb.write(json.dumps(request.body))
 
-    with open(target_file, "w") as f:
-        f.write(f"{request.method.upper()} {request.url}\n")
-        f.write("Content-Type: application/json\n")
-        f.write(f"@{target_file_json}")
+    return body_fpath
     
 
-    return target_file, target_file_json
+def create_request_file(request: Request):
+    id = secrets.token_hex(nbytes=8)
+    
+    request_fpath = f"/tmp/{id}_{request.slug_id()}.txt"
+    body_fpath = ""
+
+    with open(request_fpath, "w") as f:
+        f.write(f"{request.method.upper()} {request.url}\n")
+        
+        if request.headers:
+            for key, value in request.headers.items():
+                f.write(f"{key}: {value}\n")
+        
+        if request.body:
+            body_fpath = _create_body_file(id, request)
+
+            f.write(f"@{body_fpath}")
+
+    return request_fpath, body_fpath
 

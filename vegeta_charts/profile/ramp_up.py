@@ -38,7 +38,7 @@ class RampUp:
     def run(self, attack: Callable, request: Request, target_file: str):
         fpath_out = f"/tmp/out_{request.slug_id()}_0.json"
 
-        attack(self.initial_load.load, self.initial_load.duration, fpath_out, request, target_file)
+        attack(self.initial_load.load, self.initial_load.duration, fpath_out, target_file)
 
         seconds_counter = self.initial_load.duration
 
@@ -50,7 +50,7 @@ class RampUp:
             fpath_out = f"/tmp/out_{request.slug_id()}_{idx}.json"
             outputs.append({"rate": next_load, "path": fpath_out})
 
-            attack(next_load, self.step_duration(), fpath_out, request, target_file)
+            attack(next_load, self.step_duration(), fpath_out, target_file)
 
             seconds_counter += self.step_duration()
 
@@ -60,6 +60,6 @@ class RampUp:
 
         outputs.append({"rate": self.max_load, "path": fpath_out})
 
-        attack(self.max_load, sec_remain, fpath_out, request, target_file)
+        attack(self.max_load, sec_remain, fpath_out, target_file)
 
         return outputs

@@ -1,9 +1,9 @@
 {
     "config": {
-        "keep_results": true,
-        "ramp_up": {
+        "type": "rampup",
+        "params": {
             "start_load": 10,
-            "max_load": 50,
+            "max_load": 20,
             "test_duration": 10
         }
     },

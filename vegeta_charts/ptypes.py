@@ -1,5 +1,4 @@
 from typing import Optional
-from pydantic import BaseModel
 from dataclasses import dataclass
 
 
@@ -16,7 +15,7 @@ class Load:
         self.duration = int(self.duration)
 
 
-class RampUp(BaseModel):
+class RampUp2(BaseModel):
     start_load: int
     max_load: int
     test_duration: int

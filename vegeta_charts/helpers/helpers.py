@@ -1,6 +1,6 @@
 import secrets
 import json
-from vegeta_super_sayian.ptypes import Request
+from vegeta_charts.ptypes import Request
 
 
 def create_target_file(request: Request):

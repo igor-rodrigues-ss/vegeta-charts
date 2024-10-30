@@ -7,28 +7,30 @@ ROTATION = 30
 GROUP_SECONDS = 5
 
 
-
 def create_gruop_key(df, seconds, col_name="key"):
     key = df.iloc[0, :].time
 
     result = []
-    
+
     for idx, row in df.iterrows():
         result.append(key)
-        
+
         if (row.timestamp.second % seconds == 0):
             key = row.time
-    
+
     df[col_name] = result
 
 
 def mean_latency(ax, dfl):
     mean = np.mean(dfl.latency_ms)
-    latency_mean = [mean]*len(dfl.index)
-    
-    dfl.latency_ms
-    pctl = np.percentile(dfl.latency_ms, 75)
-    latency_pct = [pctl]*len(dfl.index)
+    latency_mean = [mean] * len(dfl.index)
+
+    try:
+        pctl = np.percentile(dfl.latency_ms, 75)
+        latency_pct = [pctl]*len(dfl.index)
+    except Exception as exc:
+        breakpoint()
+        print()
 
     ax.grid(linestyle="--")
     ax.plot(dfl.index, dfl.latency_ms, linestyle='-', color="green", marker="o", label="Latência")
@@ -66,11 +68,11 @@ def errors_and_reqs(ax, df_err):
 def success_and_errors(ax, df):
     success = df.loc[df["error"] == ""].count().iloc[0]
     error = df.loc[df["error"] != ""].count().iloc[0]
-    
+
     values = [success, error]
 
     tot = success.sum() + error.sum()
-    
+
     ax.set_title("Sucesso x Erros") 
     bar1 = ax.bar(["success"], success, color=["tab:green"])
     bar2 = ax.bar(["error (KOs)"], error, color=["tab:red"])
@@ -80,7 +82,23 @@ def success_and_errors(ax, df):
         percent = round(height / tot * 100, 1)
         ax.text(rect.get_x() + rect.get_width() / 2.0, height, f'{height} ({percent}%)', ha='center', va='bottom')
 
+def genereate_status_code_chart(ax, df):
+    dfg = df.groupby("code").agg({"seq": "count"})
+    dfg.rename(columns={"seq": "Status Code"}, inplace=True)
+    lbls = [str(item) for item in dfg.index]
+    vals = [int(item) for item in dfg["Status Code"]]
 
+    bar = ax.bar(lbls, vals)
+
+    tot = df.shape[0]
+    
+    for rect in bar:
+        height = rect.get_height()
+        percent = round(height / tot * 100, 1)
+        ax.text(rect.get_x() + rect.get_width() / 2.0, height, f'{height} ({percent}%)', ha='center', va='bottom')
+
+    ax.set_title("Status Code")
+    
 def generate_report(fpath: str, request_id: str):
     df = pd.read_json(fpath)
 
@@ -93,7 +111,7 @@ def generate_report(fpath: str, request_id: str):
     dfl["latency_ms"] = dfl.latency_ms.round(0)
     df_err = df.groupby("key_one_sec").agg({"rate": "mean", "error_bool": "sum"})
 
-    fig, ax = plt.subplots(2, 2, figsize=(12, 10))
+    fig, ax = plt.subplots(3, 2, figsize=(11, 14))
 
     mean_latency(ax[0][0], dfl)
 
@@ -102,6 +120,10 @@ def generate_report(fpath: str, request_id: str):
     errors_and_reqs(ax[1][0], df_err)
 
     success_and_errors(ax[1][1], df)
+
+    genereate_status_code_chart(ax[2][0], df)
+
+    ax[2][1].axis('off')
 
     fig.tight_layout()
 

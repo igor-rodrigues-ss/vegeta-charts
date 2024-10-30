@@ -2,6 +2,6 @@ from enum import Enum
 
 
 class TestType(Enum):
-    RAMPUP = "rampup"
+    RAMPUP = "ramp-up"
     SPIKE = "spike"
     FIXED = "fixed"

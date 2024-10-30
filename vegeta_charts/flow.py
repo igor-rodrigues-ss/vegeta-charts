@@ -17,9 +17,9 @@ class FlowFile:
             except Exception as exc:
                 raise ValueError(f"Invalid flow file: {exc}")
         
-        self.test_type_name = self.flow_content.get("config", {}).get("type")
+        self.test_type_name = self.flow_content.get("profile", {}).get("type")
 
-        self.remove_results = bool(self.flow_content.get("config", {}).get("remove_results", True))
+        self.remove_results = bool(self.flow_content.get("results", {}).get("remove_json", True))
 
         self._validate()
 
@@ -32,7 +32,7 @@ class FlowFile:
 
     def test_profile(self):
         if self.test_type_name == TestType.RAMPUP.value:
-            return RampUp(**self.flow_content["config"]["params"])
+            return RampUp(**self.flow_content["profile"]["params"])
 
         return Spike()
         

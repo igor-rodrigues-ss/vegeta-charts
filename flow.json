@@ -1,6 +1,9 @@
 {
-    "config": {
-        "type": "rampup",
+    "results": {
+        "remove_json": true
+    },
+    "profile": {
+        "type": "ramp-up",
         "params": {
             "start_load": 10,
             "max_load": 20,

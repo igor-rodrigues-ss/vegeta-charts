@@ -5,7 +5,7 @@ with open('requirements.txt') as f:
     required = f.read().splitlines()
 
 setup(
-    name="foo",
+    name="vegeta-charts",
     version="1.0",
     packages=find_packages(),
     install_requires=required,

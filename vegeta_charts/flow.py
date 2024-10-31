@@ -9,6 +9,7 @@ class FlowFile:
 
     test_type_name = None
     remove_results: bool = True
+    debug: bool = False
 
     def __init__(self):
         with open("flow.json") as f:
@@ -20,6 +21,7 @@ class FlowFile:
         self.test_type_name = self.flow_content.get("profile", {}).get("type")
 
         self.remove_results = bool(self.flow_content.get("results", {}).get("remove_json", True))
+        self.debug = bool(self.flow_content.get("config", {}).get("debug", False))
 
         self._validate()
 

@@ -1,10 +1,11 @@
-import secrets
 import json
+import secrets
+
 from vegeta_charts.ptypes import Request
 
 
 def _create_body_file(id: str, request: Request) -> str:
-    body_fpath = f"/tmp/{id}_{request.slug_id()}.json"
+    body_fpath = f"/tmp/body_{id}_{request.slug_id()}.json"
 
     with open(body_fpath, "w") as fb:
         fb.write(json.dumps(request.body))
@@ -31,4 +32,3 @@ def create_request_file(request: Request):
             f.write(f"@{body_fpath}")
 
     return request_fpath, body_fpath
-

@@ -1,7 +1,7 @@
 import json
 import secrets
 
-from vegeta_charts.ptypes import Request
+from vegeta_charts.dto.request import Request
 
 
 def _create_body_file(id: str, request: Request) -> str:

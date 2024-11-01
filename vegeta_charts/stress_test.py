@@ -1,8 +1,8 @@
 import os
 import json
 
-from vegeta_charts.flow import FlowFile
-from vegeta_charts.ptypes import Request
+from vegeta_charts.dto.flow import FlowFile
+from vegeta_charts.dto.request import Request
 from vegeta_charts.profile.iprofile import TestProfile
 from vegeta_charts.vegeta import files as vegeta_files
 from vegeta_charts.charts.figure import generate_report
@@ -31,7 +31,7 @@ def join_outputs(fpaths: list[dict], req_id: str):
     return output_path
 
 
-def stress(test_profile: TestProfile, request: Request, flow_file: FlowFile):
+def run(test_profile: TestProfile, request: Request, flow_file: FlowFile):
     request_fpath, body_fpath = vegeta_files.create_request_file(request)
 
     outputs = test_profile.run(request, request_fpath, debug=flow_file.debug)

@@ -26,9 +26,6 @@ class FlowFile:
         self._validate()
 
     def _validate(self):
-        # TODO: request must be a list
-        # TODO: test_duration min is 10 seconds
-
         if not self.test_type_name:
             raise ValueError("config.type is required on flow.json")
 

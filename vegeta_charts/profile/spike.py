@@ -1,7 +1,7 @@
 from typing import Callable
 from dataclasses import dataclass
 
-from vegeta_charts.ptypes import Request
+from vegeta_charts.dto.request import Request
 
 
 @dataclass

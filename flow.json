@@ -1,4 +1,7 @@
 {
+    "config": {
+        "debug": false
+    },
     "results": {
         "remove_json": true
     },
@@ -15,7 +18,9 @@
             "id": "Creating data",
             "method": "PUT",
             "headers": {
-                "Authorization": "Bearer XXXXX"
+                "Authorization": "Bearer XXXXX",
+                "X-Apikey": "'!#$%&'()*+,-./:;<=>?@[\\]^_`{|}~'"
+                
             },
             "url": "https://httpbin.org/put",
             "body": {

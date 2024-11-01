@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 
 from vegeta_charts.profile.iprofile import TestProfile
-from vegeta_charts.ptypes import Request
+from vegeta_charts.dto.request import Request
 
 from vegeta_charts.vegeta import cmd as vegeta_cmd
 

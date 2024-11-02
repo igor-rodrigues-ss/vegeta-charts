@@ -1,13 +1,16 @@
+import sys
 
 from dataclasses import dataclass
 
-from vegeta_charts.profile.iprofile import TestProfile
 from vegeta_charts.dto.request import Request
-
 from vegeta_charts.vegeta import cmd as vegeta_cmd
+from vegeta_charts.profile.iprofile import ITestProfile
+
 
 
 LOAD_TIME_PERCENT = 0.1
+
+RAMPUP_TIME = 0.3
 
 
 @dataclass
@@ -20,13 +23,12 @@ class Load:
         self.duration = int(self.duration)
 
 
-class RampUp(TestProfile):
+class RampUp(ITestProfile):
     start_load: int
     max_load: int
     test_duration: int
 
     def __init__(self, start_load: int, max_load: int, test_duration: int):
-
         self.start_load = start_load
         self.max_load = max_load
         self.test_duration = test_duration
@@ -40,6 +42,13 @@ class RampUp(TestProfile):
     
     def step_load(self):
         return 10
+    
+    def validate(self):
+        if self.start_load > self.max_load:
+            sys.exit(f"InvalidFlowFile: 'profile.params.start_load' must be less than 'profile.max load'.")
+        
+        if self.test_duration < 10:
+            sys.exit(f"InvalidFlowFile: 'profile.params.test_duration' must be greater or equal than 10.")
 
     def run(self, request: Request, request_fpath: str, debug: bool = False) -> list:
         idx = 1

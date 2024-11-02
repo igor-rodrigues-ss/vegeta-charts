@@ -8,6 +8,10 @@ from vegeta_charts.dto.request import Request
 from vegeta_charts.helpers.process_manager import ProcessManager
 
 
+# TODO: Calcular rampup corretamente:
+# - 10% do tempo para carga inicial
+# - 30% para rampup
+# - 60% com carga maxima
 # TODO: adicionar escolha de gráficos
 # TODO: validar caso todas as requisições falhe. (Nesses casos a geração de gáficos está falhando)
 # TODO: colocar nos KOs somente status code 0
@@ -25,12 +29,16 @@ def main():
 
     results = []
 
+    test_profile = flow_file.test_profile()
+
+    test_profile.validate()
+
     for request_raw in flow_file.requests():
         request = Request(**request_raw)
 
         results.append(f"result_{request.slug_id()}.json")
 
-        proc_stress.start(flow_file.test_profile(), request, flow_file)
+        proc_stress.start(test_profile, request, flow_file)
 
         if proc_stress.should_wait():
             proc_stress.wait()

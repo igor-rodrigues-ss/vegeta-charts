@@ -1,8 +1,9 @@
 import json
 
 from vegeta_charts.enums import TestType
-from vegeta_charts.profile.ramp_up import RampUp
 from vegeta_charts.profile.spike import Spike
+from vegeta_charts.profile.ramp_up import RampUp
+from vegeta_charts.profile.iprofile import ITestProfile
 
 
 class FlowFile:
@@ -29,7 +30,7 @@ class FlowFile:
         if not self.test_type_name:
             raise ValueError("config.type is required on flow.json")
 
-    def test_profile(self):
+    def test_profile(self) -> ITestProfile:
         if self.test_type_name == TestType.RAMPUP.value:
             return RampUp(**self.flow_content["profile"]["params"])
 
